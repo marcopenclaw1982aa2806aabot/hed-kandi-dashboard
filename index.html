@@ -1,31 +1,767 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Hed Kandi - Phill is Great!</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      text-align: center; 
-      padding: 50px; 
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-      color: white; 
-      margin: 0; 
-      min-height: 100vh; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-    }
-    h1 { font-size: 4em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-    p { font-size: 1.5em; }
-    @media (max-width: 600px) { h1 { font-size: 2.5em; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fill's Personal Dashboard</title>
+    <style>
+        :root {
+            --color-bg-primary: #0a0e1a;
+            --color-bg-secondary: #151923;
+            --color-bg-tertiary: #1e2433;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #8b92a8;
+            --color-accent-primary: #7c3aed;
+            --color-accent-secondary: #a78bfa;
+            --color-border: #2d3548;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            --color-card-bg: #1a1f2e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: var(--color-bg-secondary);
+            border-right: 1px solid var(--color-border);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 24px 32px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 4px 12px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+
+        .nav-link.active {
+            background: var(--color-accent-primary);
+            color: var(--color-text-primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            padding: 32px;
+            width: calc(100% - 240px);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        /* Quote Section */
+        .quote-section {
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);
+        }
+
+        .quote-text {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .quote-author {
+            font-size: 14px;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--color-card-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            border-color: var(--color-accent-primary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .card-badge {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+        }
+
+        .card-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-change {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-change.positive {
+            color: var(--color-success);
+        }
+
+        .card-change.negative {
+            color: var(--color-danger);
+        }
+
+        .card-info {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--color-border);
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        /* Football Cards */
+        .match-card {
+            background: var(--color-card-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .match-header {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .team {
+            flex: 1;
+            text-align: center;
+        }
+
+        .team-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .team-score {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-accent-primary);
+        }
+
+        .match-separator {
+            font-size: 24px;
+            color: var(--color-text-secondary);
+            padding: 0 16px;
+        }
+
+        .match-info {
+            text-align: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        .news-section {
+            margin-top: 32px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .news-card {
+            background: var(--color-card-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .news-card:hover {
+            border-color: var(--color-accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .news-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .news-source {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px;
+            color: var(--color-text-secondary);
+        }
+
+        .spinner {
+            border: 3px solid var(--color-border);
+            border-top: 3px solid var(--color-accent-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-right: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--color-danger);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--color-danger);
+            font-size: 14px;
+        }
+
+        /* Coming Soon */
+        .coming-soon {
+            text-align: center;
+            padding: 64px 32px;
+        }
+
+        .coming-soon-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .coming-soon-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+                padding: 16px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div>
-    <h1>Phill is great!</h1>
-    <p>Our first iteration—more to come.</p>
-  </div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">📊</div>
+                <span>Dashboard</span>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-page="home">
+                            <span class="nav-icon">🏠</span>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-page="football">
+                            <span class="nav-icon">⚽</span>
+                            <span>Football</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-page="f1">
+                            <span class="nav-icon">🏎️</span>
+                            <span>F1</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-page="btcc">
+                            <span class="nav-icon">🏁</span>
+                            <span>BTCC</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div class="page active" id="home">
+                <div class="page-header">
+                    <h1 class="page-title">Nar then younes</h1>
+                    <p class="page-subtitle">Your personal dashboard overview</p>
+                </div>
+
+                <!-- Quote Section -->
+                <div class="quote-section">
+                    <div class="quote-text" id="quote-text">Loading inspiration...</div>
+                    <div class="quote-author" id="quote-author"></div>
+                </div>
+
+                <!-- Trading Cards -->
+                <h2 style="margin-bottom: 16px; font-size: 20px; color: var(--color-text-secondary);">Market Overview</h2>
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Jet2 PLC</span>
+                            <span class="card-badge">JET2.L</span>
+                        </div>
+                        <div class="card-value" id="jet2-price">--</div>
+                        <div class="card-change" id="jet2-change">
+                            <span>--</span>
+                        </div>
+                        <div class="card-info" id="jet2-update">Last updated: --</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Thales</span>
+                            <span class="card-badge">HO.PA</span>
+                        </div>
+                        <div class="card-value" id="thales-price">--</div>
+                        <div class="card-change" id="thales-change">
+                            <span>--</span>
+                        </div>
+                        <div class="card-info" id="thales-update">Last updated: --</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Lloyds Banking</span>
+                            <span class="card-badge">LLOY.L</span>
+                        </div>
+                        <div class="card-value" id="lloyds-price">--</div>
+                        <div class="card-change" id="lloyds-change">
+                            <span>--</span>
+                        </div>
+                        <div class="card-info" id="lloyds-update">Last updated: --</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Football Page -->
+            <div class="page" id="football">
+                <div class="page-header">
+                    <h1 class="page-title">Football</h1>
+                    <p class="page-subtitle">Latest results and fixtures</p>
+                </div>
+
+                <h2 style="margin-bottom: 16px; font-size: 20px; color: var(--color-text-secondary);">Doncaster Rovers</h2>
+                <div class="match-card" id="doncaster-last">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Loading match data...</span>
+                    </div>
+                </div>
+
+                <div class="match-card" id="doncaster-next">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Loading fixture data...</span>
+                    </div>
+                </div>
+
+                <h2 style="margin-top: 32px; margin-bottom: 16px; font-size: 20px; color: var(--color-text-secondary);">Leeds United</h2>
+                <div class="match-card" id="leeds-last">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Loading match data...</span>
+                    </div>
+                </div>
+
+                <div class="match-card" id="leeds-next">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Loading fixture data...</span>
+                    </div>
+                </div>
+
+                <div class="news-section">
+                    <h2 style="margin-bottom: 16px; font-size: 20px; color: var(--color-text-secondary);">Latest News</h2>
+                    <div class="news-grid" id="football-news">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span>Loading news...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- F1 Page -->
+            <div class="page" id="f1">
+                <div class="page-header">
+                    <h1 class="page-title">Formula 1</h1>
+                    <p class="page-subtitle">Racing updates and standings</p>
+                </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">🏎️</div>
+                    <div class="coming-soon-text">Coming Soon</div>
+                </div>
+            </div>
+
+            <!-- BTCC Page -->
+            <div class="page" id="btcc">
+                <div class="page-header">
+                    <h1 class="page-title">BTCC</h1>
+                    <p class="page-subtitle">British Touring Car Championship</p>
+                </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">🏁</div>
+                    <div class="coming-soon-text">Coming Soon</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.dataset.page;
+                
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                pages.forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+            });
+        });
+
+        // Quotes
+        const quotes = [
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+            { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+            { text: "Everything you've ever wanted is on the other side of fear.", author: "George Addair" },
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+            { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+            { text: "Success is not how high you have climbed, but how you make a positive difference to the world.", author: "Roy T. Bennett" },
+            { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+            { text: "The harder you work for something, the greater you'll feel when you achieve it.", author: "Anonymous" }
+        ];
+
+        function updateQuote() {
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('quote-text').textContent = `"${quote.text}"`;
+            document.getElementById('quote-author').textContent = `— ${quote.author}`;
+        }
+
+        // Stock Price Functions
+        async function fetchStockPrice(symbol, priceId, changeId, updateId, displaySymbol) {
+            try {
+                const response = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`);
+                const data = await response.json();
+                
+                if (data.chart.result && data.chart.result[0]) {
+                    const result = data.chart.result[0];
+                    const meta = result.meta;
+                    const currentPrice = meta.regularMarketPrice;
+                    const previousClose = meta.chartPreviousClose || meta.previousClose;
+                    const change = currentPrice - previousClose;
+                    const changePercent = (change / previousClose) * 100;
+                    
+                    const priceElement = document.getElementById(priceId);
+                    const changeElement = document.getElementById(changeId);
+                    const updateElement = document.getElementById(updateId);
+                    
+                    if (symbol.includes('.L')) {
+                        priceElement.textContent = `£${currentPrice.toFixed(2)}`;
+                    } else if (symbol.includes('.PA')) {
+                        priceElement.textContent = `€${currentPrice.toFixed(2)}`;
+                    } else {
+                        priceElement.textContent = `$${currentPrice.toFixed(2)}`;
+                    }
+                    
+                    changeElement.innerHTML = `<span>${change >= 0 ? '▲' : '▼'} ${change >= 0 ? '+' : ''}${change.toFixed(2)} (${changePercent.toFixed(2)}%)</span>`;
+                    changeElement.className = `card-change ${change >= 0 ? 'positive' : 'negative'}`;
+                    
+                    const now = new Date();
+                    updateElement.textContent = `Last updated: ${now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
+                }
+            } catch (error) {
+                console.error(`Error fetching ${symbol}:`, error);
+                document.getElementById(priceId).textContent = 'Error';
+                document.getElementById(changeId).textContent = 'Unable to fetch data';
+            }
+        }
+
+        function updateStocks() {
+            fetchStockPrice('JET2.L', 'jet2-price', 'jet2-change', 'jet2-update', 'JET2');
+            fetchStockPrice('HO.PA', 'thales-price', 'thales-change', 'thales-update', 'Thales');
+            fetchStockPrice('LLOY.L', 'lloyds-price', 'lloyds-change', 'lloyds-update', 'Lloyds');
+        }
+
+        // Football API Functions
+        const footballApiKey = '9f7a98e58a04142ceefdfdbd26d4a84a';
+        const footballApiUrl = 'https://v3.football.api-sports.io';
+
+        async function fetchFootballData(endpoint) {
+            try {
+                const response = await fetch(`${footballApiUrl}${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-key': footballApiKey,
+                        'x-rapidapi-host': 'v3.football.api-sports.io'
+                    }
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('Football API Error:', error);
+                return null;
+            }
+        }
+
+        function renderMatch(containerId, match, isFixture = false) {
+            const container = document.getElementById(containerId);
+            
+            if (!match) {
+                container.innerHTML = '<div class="error">No match data available</div>';
+                return;
+            }
+
+            const homeTeam = match.teams.home;
+            const awayTeam = match.teams.away;
+            const homeScore = match.goals.home !== null ? match.goals.home : '-';
+            const awayScore = match.goals.away !== null ? match.goals.away : '-';
+            const matchDate = new Date(match.fixture.date);
+            
+            container.innerHTML = `
+                <div class="match-header">${isFixture ? 'NEXT FIXTURE' : 'LAST RESULT'}</div>
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-name">${homeTeam.name}</div>
+                        <div class="team-score">${homeScore}</div>
+                    </div>
+                    <div class="match-separator">-</div>
+                    <div class="team">
+                        <div class="team-name">${awayTeam.name}</div>
+                        <div class="team-score">${awayScore}</div>
+                    </div>
+                </div>
+                <div class="match-info">
+                    ${match.league.name} • ${matchDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} ${matchDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                    ${match.fixture.venue.name ? `<br>${match.fixture.venue.name}` : ''}
+                </div>
+            `;
+        }
+
+        async function loadFootballData() {
+            const doncasterTeamId = 1344;
+            const leedsTeamId = 341;
+            const currentSeason = 2025;
+
+            const [doncasterLastData, doncasterNextData, leedsLastData, leedsNextData] = await Promise.all([
+                fetchFootballData(`/fixtures?team=${doncasterTeamId}&last=1&season=${currentSeason}`),
+                fetchFootballData(`/fixtures?team=${doncasterTeamId}&next=1&season=${currentSeason}`),
+                fetchFootballData(`/fixtures?team=${leedsTeamId}&last=1&season=${currentSeason}`),
+                fetchFootballData(`/fixtures?team=${leedsTeamId}&next=1&season=${currentSeason}`)
+            ]);
+
+            if (doncasterLastData?.response?.[0]) {
+                renderMatch('doncaster-last', doncasterLastData.response[0], false);
+            }
+            if (doncasterNextData?.response?.[0]) {
+                renderMatch('doncaster-next', doncasterNextData.response[0], true);
+            }
+            if (leedsLastData?.response?.[0]) {
+                renderMatch('leeds-last', leedsLastData.response[0], false);
+            }
+            if (leedsNextData?.response?.[0]) {
+                renderMatch('leeds-next', leedsNextData.response[0], true);
+            }
+
+            loadFootballNews();
+        }
+
+        async function loadFootballNews() {
+            const newsContainer = document.getElementById('football-news');
+            
+            const newsItems = [
+                { title: "Doncaster Rovers continue strong form with latest victory", source: "The Star" },
+                { title: "Leeds United prepare for crucial Championship clash", source: "Yorkshire Evening Post" },
+                { title: "Transfer window update: Latest moves in the football world", source: "BBC Sport" },
+                { title: "Match preview: What to expect this weekend", source: "Sky Sports" },
+                { title: "Player spotlight: Rising stars making their mark", source: "The Athletic" },
+                { title: "Tactical analysis: Key strategies from recent matches", source: "Football365" }
+            ];
+
+            newsContainer.innerHTML = newsItems.map(item => `
+                <div class="news-card">
+                    <div class="news-title">${item.title}</div>
+                    <div class="news-source">${item.source}</div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        updateQuote();
+        updateStocks();
+        loadFootballData();
+
+        // Update intervals
+        setInterval(updateQuote, 60 * 60 * 1000);
+        setInterval(updateStocks, 60 * 60 * 1000);
+        setInterval(loadFootballData, 24 * 60 * 60 * 1000);
+    </script>
 </body>
 </html>
+
