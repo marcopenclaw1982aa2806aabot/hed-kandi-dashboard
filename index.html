@@ -1307,6 +1307,63 @@
         setInterval(updateStocks, 60 * 60 * 1000);
         setInterval(loadFootballData, 24 * 60 * 60 * 1000);
     </script>
+
+    <style>
+#faro-container { padding: 1rem; margin-top: 2rem; }
+.faro-table { border-collapse: collapse; width: 100%; margin-bottom: 1.5rem; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 12px; overflow: hidden; }
+.faro-table th, .faro-table td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid var(--color-border); }
+.faro-table th { background: var(--color-bg-secondary); font-weight: 600; }
+.faro-table tr:hover { background: var(--color-bg-tertiary); }
+.faro-cheapest { background: rgba(16, 185, 129, 0.2); }
+    </style>
+    <script>
+async function loadFaroDeals() {
+ const el = document.getElementById('faro-content');
+ if (!el) return;
+ try {
+  const resp = await fetch('/faro/latest');
+  if (!resp.ok) {
+   el.innerHTML = `<div class="error">Failed to load Faro: ${resp.status}</div>`;
+   return;
+  }
+  const data = await resp.json();
+  const byMonth = data.by_month || [];
+  if (!byMonth.length) {
+   el.innerHTML = '<div class="error">No deals found</div>';
+   return;
+  }
+  let html = '';
+  byMonth.forEach(monthBlock => {
+   const month = monthBlock.month;
+   const deals = monthBlock.deals || [];
+   if (!deals.length) return;
+   const cheapestPrice = Math.min(...deals.map(d => parseFloat(d.price)));
+   html += `<h3 style="margin: 2rem 0 1rem 0; color: var(--color-accent-primary);">${month}</h3>`;
+   html += '<table class="faro-table"><thead><tr><th>Origin</th><th>Outbound</th><th>Return</th><th>Price</th></tr></thead><tbody>';
+   deals.forEach(d => {
+    const isCheapest = parseFloat(d.price) === cheapestPrice;
+    const rowClass = isCheapest ? 'faro-cheapest' : '';
+    html += `<tr class="${rowClass}"><td>${d.origin}</td><td>${d.outbound_date}</td><td>${d.return_date}</td><td>£${d.price}</td></tr>`;
+   });
+   html += '</tbody></table>';
+  });
+  el.innerHTML = html;
+ } catch (e) {
+  el.innerHTML = '<div class="error">Error loading Faro data</div>';
+  console.error(e);
+ }
+}
+
+// Load when Flights page activated
+const navLinks = document.querySelectorAll('.nav-link');
+navLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    if (link.dataset.page === 'flights') {
+      setTimeout(loadFaroDeals, 200);
+    }
+  });
+});
+    </script>
 </body>
 </html>
 
